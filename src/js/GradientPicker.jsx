@@ -82,13 +82,13 @@ const GradientPicker = ({ angle, mode, onChange, pickr, setAngle, setMode, stops
     }, [gpickr]);
 
     useEffect(() => {
-        if (gpickr && initialized && gpickr._angle !== angle) {
+        if (gpickr && initialized && gpickr._angle !== angle && angle !== undefined) {
             gpickr.setLinearAngle(angle);
         }
     }, [gpickr, initialized, angle]);
 
     useEffect(() => {
-        if (gpickr && initialized && gpickr._mode !== mode) {
+        if (gpickr && initialized && gpickr._mode !== mode && mode !== undefined) {
             gpickr.setMode(mode);
         }
     }, [gpickr, initialized, mode]);

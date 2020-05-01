@@ -1,6 +1,8 @@
-#### Demo: https://chrischrischris.github.io/react-gpickr/
+# React Gradient Picker
 
-> This is a react version of [gpickr](https://github.com/Simonwep/gpickr).
+### A simple gradient picker based on [gpickr](https://github.com/Simonwep/gpickr)
+
+#### Demo: https://chrischrischris.github.io/react-gpickr/
 
 API and details to be documented soon.
 <!--

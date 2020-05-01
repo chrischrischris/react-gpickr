@@ -2,18 +2,21 @@ const webpack = require('webpack');
 const path = require('path');
 const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     resolve: {
         extensions: ['.js', '.jsx'],
     },
-    entry:  {
-        reactInit: './src/reactInit.js',
-        GradientPicker:  './src/js/GradientPicker.jsx',
+    entry: {
+        '../local/reactInit': './src/local/reactInit.js',
+        '../local/styles': './src/local/styles.scss',
+        'GradientPicker': './src/js/GradientPicker.jsx',
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].js',
+        filename: '[name].min.js',
         library: 'react-gpickr',
         libraryTarget: 'umd',
         publicPath: '/dist/',
@@ -59,11 +62,14 @@ module.exports = {
     },
 
     plugins: [
+        new CleanWebpackPlugin(),
+        new CopyPlugin([
+            { from: 'node_modules/@simonwep/pickr/dist/themes', to: 'themes' },
+        ]),
         new FixStyleOnlyEntriesPlugin(),
         new MiniCssExtractPlugin({
-            filename: 'gpickr.min.css'
+            filename: '[name].min.css'
         }),
-        new webpack.SourceMapDevToolPlugin({})
+        new webpack.SourceMapDevToolPlugin({}),
     ],
-    // devtool: 'eval-cheap-module-source-map',
 };
