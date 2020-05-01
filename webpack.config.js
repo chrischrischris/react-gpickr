@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const path = require('path');
 const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -6,14 +7,32 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.jsx'],
     },
-    entry:  './src/js/GradientPicker.jsx',
-
+    entry:  {
+        reactInit: './src/reactInit.js',
+        GradientPicker:  './src/js/GradientPicker.jsx',
+    },
     output: {
-        publicPath: 'dist',
-        filename: 'gpickr.min.js',
-        library: 'GPickr',
-        libraryExport: 'default',
-        libraryTarget: 'umd'
+        path: path.resolve(__dirname, 'dist'),
+        filename: '[name].js',
+        library: 'react-gpickr',
+        libraryTarget: 'umd',
+        publicPath: '/dist/',
+        umdNamedDefine: true
+    },
+    externals: {
+        // Don't bundle react or react-dom
+        react: {
+            commonjs: 'react',
+            commonjs2: 'react',
+            amd: 'React',
+            root: 'React'
+        },
+        'react-dom': {
+            commonjs: 'react-dom',
+            commonjs2: 'react-dom',
+            amd: 'ReactDOM',
+            root: 'ReactDOM'
+        }
     },
 
     devServer: {
@@ -46,10 +65,5 @@ module.exports = {
         }),
         new webpack.SourceMapDevToolPlugin({})
     ],
-    externals: {
-        react: 'react',
-        'react-dom': 'react-dom'
-    }
-
     // devtool: 'eval-cheap-module-source-map',
 };
