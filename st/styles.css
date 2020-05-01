@@ -21,7 +21,7 @@ body {
 body header {
     font-family: 'Montserrat', sans-serif;
     position: relative;
-    padding: 10vh 0;
+    padding: 10vh 0 5vh 0;
     text-align: center;
     color: #36425b;
 }
@@ -61,4 +61,9 @@ body main {
     display: flex;
     align-items: center;
     flex-direction: column;
+}
+
+#description {
+    margin: 10px 0 50px 0;
+    text-align: center;
 }

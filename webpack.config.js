@@ -6,7 +6,6 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.jsx'],
     },
-    // entry:  './src/js/gpickr.js',
     entry:  './src/js/GradientPicker.jsx',
 
     output: {

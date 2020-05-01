@@ -1,12 +1,14 @@
-#### Demo: https://simonwep.github.io/gpickr
+#### Demo: https://chrischrischris.github.io/react-gpickr/
 
-> This is a demo of how [pickr](https://github.com/Simonwep/pickr) could be implemented / integrated in other scenarios.
+> This is a react version of [gpickr](https://github.com/Simonwep/gpickr).
 
+API and details to be documented soon.
+<!--
 #### Usage
 ```js
 const gpickr = new GPickr({
     el: '.gradient-pickr',
-    
+
     // Pre-defined stops. These are the default since at least two should be defined
     stops: [
         ['rgb(255,132,109)', 0],
@@ -20,7 +22,7 @@ const gpickr = new GPickr({
 * gpickr.addStop(color`:String`, loc`:Number`) _- Add a color-stop._
 * gpickr.removeStop(v`:String|Number|Stop`) _- Remove a color stop by color, location or stop-instance._
 * gpickr.getGradient() _- Returns the current gradient as css string._
-* gpickr.getStops() _- Array of stop objects with each a `location` between `0` and `1` as well as an `rgba` color value. The `toString` function is overridden and 
+* gpickr.getStops() _- Array of stop objects with each a `location` between `0` and `1` as well as an `rgba` color value. The `toString` function is overridden and
 returns the array ready-to-use as comma seperated list, useful if a custom direcation / angle want to be used._
 * gpickr.getLinearAngle() _- Returns the current selected angle. `-1` if currently in radial-mode_
 * gpickr.setLinearAngle(angle`:Number`) _- Applies a new angle to the current linear gradient._
@@ -43,4 +45,4 @@ gpickr.on('init', instance => {
 }).on('change', instance => {
     console.log('change', instance.getGradient());
 });
-```
+``` -->
