@@ -1,12 +1,12 @@
 {
     "name": "react-gpickr",
     "private": true,
-    "version": "0.1.1",
+    "version": "0.1.10",
     "license": "MIT",
-    "author": "Simon Reinisch <toports@gmx.de>, Chris Peyer",
+    "author": "Chris Peyer <triplechrischrischris@gmail.com>, Simon Reinisch <toports@gmx.de>",
     "description": "",
     "keywords": [],
-    "main": "./dist/gpickr.min.js",
+    "main": "./dist/GradientPicker.js",
     "scripts": {
         "build": "webpack --mode production",
         "reactDev": "webpack --mode development",
@@ -15,10 +15,10 @@
         "pretty": "prettier --write \"src/**/*.{js,jsx}\""
     },
     "dependencies": {
-        "@simonwep/pickr": "^1.5.1",
-        "prop-types": "^15.7.2"
+        "@simonwep/pickr": "^1.5.1"
     },
     "peerDependencies": {
+        "prop-types": "^15.7.2",
         "react": "^16.13.1",
         "react-dom": "^16.13.1"
     },

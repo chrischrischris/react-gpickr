@@ -130,4 +130,5 @@ GradientPicker.defaultProps = {
         theme: 'nano',
     },
 };
-export { GradientPicker as default, linearDirections };
+
+export default GradientPicker;
