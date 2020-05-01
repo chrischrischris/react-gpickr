@@ -1,6 +1,5 @@
 {
     "name": "react-gpickr",
-    "private": true,
     "version": "0.1.10",
     "license": "MIT",
     "author": "Chris Peyer <triplechrischrischris@gmail.com>, Simon Reinisch <toports@gmx.de>",
