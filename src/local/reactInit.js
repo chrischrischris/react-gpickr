@@ -17,7 +17,7 @@ let initialStops = [
 ];
 
 const MyPicker = () => {
-    const [stops, setStops] = useState(initialStops);
+    const [stops] = useState(initialStops);
     const [angle, setAngle] = useState(180);
     const [mode, setMode] = useState();
 
