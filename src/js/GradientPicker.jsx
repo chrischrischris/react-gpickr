@@ -1,11 +1,10 @@
 /* eslint-disable no-console */
 import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { parseToHSVA } from '@simonwep/pickr/src/js/utils/color';
-import { HSVaColor } from '@simonwep/pickr/src/js/utils/hsvacolor';
+import debounce from './utils/debounce';
 import Gpickr from './gpickr';
 
-const linearDirections = {
+const LINEAR_DIRECTION = {
     TO_TOP: 'to top',
     TO_RIGHT: 'to right',
     TO_BOTTOM: 'to bottom',
@@ -16,33 +15,32 @@ const linearDirections = {
     TO_BOTTOM_LEFT: 'to bottom left',
 };
 
-const colorToHexa = (color) => {
-    const hsva = parseToHSVA(color);
-    const hexa = HSVaColor(...hsva.values)
-        .toHEXA()
-        .toString();
-    return { hexa, type: hsva.type };
+const MODE = {
+    CONIC: 'conic',
+    LINEAR: 'linear',
+    RADIAL: 'radial',
 };
 
-const convertStopsToHexa = (stops) =>
-    stops.map((stop) => ({ ...colorToHexa(stop.color), loc: stop.loc }));
-
-// const areStopsEqual = (stops1, stops2) => {
-//     if (!stops1 || !stops2 || stops1.length !== stops2.length) return false;
-//     return stops1.every((stop, i) => stop.hexa === stops2[i].hexa && stop.loc === stops2[i].loc);
-// };
-
-const GradientPicker = ({ angle, mode, onChange, pickr, setAngle, setMode, stops }) => {
+const GradientPicker = ({
+    angle,
+    cssString,
+    debounceMS,
+    getGpickrRef,
+    mode,
+    modes,
+    onChange,
+    pickrConfig,
+    setAngle,
+    setMode,
+    stops,
+}) => {
     const [gpickr, setGpickr] = useState();
     const [initialized, setInitialized] = useState(false);
 
     const gpickrRef = useRef(null);
 
     useEffect(() => {
-        if (!mode) {
-            mode = 'linear';
-            if (setMode) setMode(mode);
-        }
+        modes = modes ? { radial: false, linear: false, conic: false, ...modes } : {};
     }, []);
 
     useEffect(() => {
@@ -53,8 +51,9 @@ const GradientPicker = ({ angle, mode, onChange, pickr, setAngle, setMode, stops
                     angle,
                     mode,
                     stops,
+                    ...modes,
                     pickr: {
-                        ...pickr,
+                        ...pickrConfig,
                     },
                 }).on('init', () => {
                     setInitialized(true);
@@ -63,32 +62,43 @@ const GradientPicker = ({ angle, mode, onChange, pickr, setAngle, setMode, stops
         }
     }, [gpickrRef]);
 
-    const onGpickrChange = (inst) => {
-        if (setAngle && inst._angle !== angle) setAngle(inst._angle);
-        if (setMode && inst._mode !== mode) {
-            setMode(inst._mode);
-        }
-        // const hexaStops = convertStopsToHexa(inst._stops);
-        // setStops(hexaStops);
-
-        if (onChange) onChange(inst);
-    };
-
     useEffect(() => {
         if (gpickr) {
-            // TODO: pass details to change event, not just gpickr instance?
-            if (onChange) gpickr.on('change', onGpickrChange);
+            const onGpickrChange = (gpickrInstance) => {
+                if (setAngle && gpickrInstance._angle !== angle) setAngle(gpickrInstance._angle);
+                if (setMode && gpickrInstance._mode !== mode) {
+                    setMode(gpickrInstance._mode);
+                }
+
+                if (onChange) onChange(gpickrInstance);
+            };
+
+            const gpickrChange =
+                debounceMS !== undefined ? debounce(onGpickrChange, debounceMS) : onGpickrChange;
+
+            gpickr.on('change', gpickrChange);
+            return () => gpickr.off('change', gpickrChange);
         }
+    }, [angle, gpickr, mode]);
+
+    useEffect(() => {
+        if (gpickr && getGpickrRef) getGpickrRef(gpickr);
     }, [gpickr]);
 
     useEffect(() => {
-        if (gpickr && initialized && gpickr._angle !== angle && angle !== undefined) {
+        if (gpickr && initialized && cssString && cssString !== gpickr.getGradient()) {
+            gpickr.setGradient(cssString);
+        }
+    }, [gpickr, cssString, initialized]);
+
+    useEffect(() => {
+        if (gpickr && initialized && angle !== undefined && gpickr._angle !== angle) {
             gpickr.setLinearAngle(angle);
         }
     }, [gpickr, initialized, angle]);
 
     useEffect(() => {
-        if (gpickr && initialized && gpickr._mode !== mode && mode !== undefined) {
+        if (gpickr && initialized && mode !== undefined && gpickr._mode !== mode) {
             gpickr.setMode(mode);
         }
     }, [gpickr, initialized, mode]);
@@ -98,14 +108,22 @@ const GradientPicker = ({ angle, mode, onChange, pickr, setAngle, setMode, stops
 
 GradientPicker.propTypes = {
     angle: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    cssString: PropTypes.string,
+    debounceMS: PropTypes.number,
+    getGpickrRef: PropTypes.func,
     onChange: PropTypes.func,
     mode: PropTypes.string,
+    modes: PropTypes.shape({
+        conic: PropTypes.bool,
+        linear: PropTypes.bool,
+        radial: PropTypes.bool,
+    }),
     setAngle: PropTypes.func,
     setMode: PropTypes.func,
     stops: PropTypes.arrayOf(
         PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number]))
     ),
-    pickr: PropTypes.shape({
+    pickrConfig: PropTypes.shape({
         theme: PropTypes.string,
         swatches: PropTypes.arrayOf(PropTypes.string),
         lockOpacity: PropTypes.bool,
@@ -131,4 +149,4 @@ GradientPicker.defaultProps = {
     },
 };
 
-export default GradientPicker;
+export { GradientPicker as default, LINEAR_DIRECTION, MODE };

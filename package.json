@@ -1,21 +1,25 @@
 {
     "name": "react-gpickr",
-    "version": "0.1.12",
+    "version": "0.2.0",
     "license": "MIT",
     "author": "Chris Peyer <triplechrischrischris@gmail.com>, Simon Reinisch <toports@gmx.de>",
-    "description": "",
+    "description": "A React Gradient Creator / Picker",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/chrischrischris/react-gpickr.git"
+    },
     "keywords": [],
     "main": "./dist/GradientPicker.min.js",
     "scripts": {
         "build": "webpack --mode production",
         "dev": "webpack --mode development",
         "lint": "eslint --ext .jsx,.js ./src",
-        "prepublish": "npm run build",
+        "prepublishOnly": "npm run build",
         "pretty": "prettier --write \"src/**/*.{js,jsx}\"",
         "watch": "webpack-dev-server --mode development"
     },
     "dependencies": {
-        "@simonwep/pickr": "^1.5.1"
+        "@simonwep/pickr": "^1.6.0"
     },
     "peerDependencies": {
         "prop-types": "^15.7.2",

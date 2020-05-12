@@ -5,6 +5,7 @@ import Pickr from '@simonwep/pickr';
 import buildGPickr from './template';
 import simplifyEvent from './utils/simplifyEvent';
 import parseGradient from './utils/parseGradient';
+import nomalize from './utils/normalize';
 
 const FOCUSED_STOP = 'focused-stop';
 
@@ -38,18 +39,18 @@ const setDefaults = (opt) => {
 
     delete opt.pickr;
 
-    if (!opt.angle) opt.angle = 0;
+    if (!opt.angle) opt.angle = 180;
     if (!opt.mode) opt.mode = 'linear';
     if (!opt.stops)
         opt.stops = [
-            ['#42445a', 0],
-            ['#20b6dd', 1],
+            ['#ffffff', 0],
+            ['#000000', 1],
         ];
 
     return Object.assign(
         {
             // gradient types
-            conic: false,
+            conic: true,
             linear: true,
             radial: true,
 
@@ -71,14 +72,14 @@ class GPickr {
         { angle: 90, name: 'to right' },
         { angle: 180, name: 'to bottom' },
         { angle: 270, name: 'to left' },
-        { angle: 45, name: 'to top right' },
-        { angle: 45, name: 'to right top' },
-        { angle: 135, name: 'to right bottom' },
-        { angle: 135, name: 'to bottom right' },
-        { angle: 225, name: 'to left bottom' },
-        { angle: 225, name: 'to bottom left' },
-        { angle: 315, name: 'to top left' },
-        { angle: 315, name: 'to left top' },
+        { angle: 'to top right', name: 'to top right' },
+        { angle: 'to top right', name: 'to right top' },
+        { angle: 'to bottom right', name: 'to right bottom' },
+        { angle: 'to bottom right', name: 'to bottom right' },
+        { angle: 'to bottom left', name: 'to left bottom' },
+        { angle: 'to bottom left', name: 'to bottom left' },
+        { angle: 'to top left', name: 'to top left' },
+        { angle: 'to top left', name: 'to left top' },
     ];
 
     // Radial direction
@@ -96,8 +97,10 @@ class GPickr {
     ];
 
     _focusedStop = null;
+    _lockRepresentation = false;
     _mode = 'linear';
     _modes = [];
+    _representation = 'HEXA';
     _root = null;
     _eventListener = {
         init: [],
@@ -165,12 +168,18 @@ class GPickr {
                     this._focusedStop.color = color.toRGBA().toString(0);
                     this._render();
                 }
+
+                if (!this._lockRepresentation) {
+                    this._representation = this._pickr.getColorRepresentation();
+                }
             })
             .on('init', () => {
                 // Add pre-defined swatches
                 for (const [color, loc] of opt.stops) {
                     this.addStop(color, loc, true);
                 }
+
+                this._representation = this._pickr.getColorRepresentation();
 
                 this._bindEvents();
                 this._emit('init', this);
@@ -299,6 +308,14 @@ class GPickr {
         return loc;
     }
 
+    _setPickrColor(color) {
+        // Preserve selected color representation
+        this._lockRepresentation = true;
+        this._pickr.setColor(color);
+        this._lockRepresentation = false;
+        this._pickr.setColorRepresentation(this._representation);
+    }
+
     /**
      * Adds a stop
      * @param color Stop color
@@ -320,7 +337,7 @@ class GPickr {
                 e.preventDefault();
                 const markersbcr = markers.getBoundingClientRect();
                 this.setFocusedStop(stop);
-                this._pickr.setColor(stop.color);
+                this._setPickrColor(stop.color);
                 let hidden = false;
 
                 // Listen for mouse / touch movements
@@ -355,8 +372,7 @@ class GPickr {
         // this._focusedStop = stop;
         this.setFocusedStop(stop);
         this._stops.push(stop);
-
-        this._pickr.setColor(color);
+        this._setPickrColor(color);
         color = this._pickr.getColor().toRGBA().toString(0);
 
         this._render(silent);
@@ -445,8 +461,8 @@ class GPickr {
             }
 
             if (type === 'linear') {
-                this._angle = 180; // Default value
-                modifier && this.setLinearAngle(modifier);
+                // If no angle is specified default value is 180
+                this.setLinearAngle(modifier !== null ? modifier : 180);
             } else if (type === 'radial') {
                 this._direction = 'circle at center'; // Default value
                 modifier && this.setRadialPosition(modifier);
@@ -496,9 +512,13 @@ class GPickr {
             switch (type) {
                 case 'linear':
                 case 'radial':
-                    return this.map((v) => `${v.color} ${v.location * 100}%`).join(',');
+                    return this.map((v) => `${v.color} ${(v.location * 100).toFixed(1)}%`).join(
+                        ','
+                    );
                 case 'conic':
-                    return this.map((v) => `${v.color} ${v.location * 360}deg`).join(',');
+                    return this.map((v) => `${v.color} ${(v.location * 360).toFixed(1)}deg`).join(
+                        ','
+                    );
             }
         };
 
@@ -513,18 +533,15 @@ class GPickr {
         return this._mode === 'linear' ? this._angle : -1;
     }
 
-    isValidDirectionString(dir) {
-        const sideOrCorner = /^to (left (top|bottom)|right (top|bottom)|left|right|top|bottom)/i;
-        const match = dir.match(sideOrCorner);
-        return !!match;
-    }
-
     /**
      * Sets a new angle, can be a number (degrees) or any valid css string like 0.23turn or "to bottom"
      * @param angle
      */
     setLinearAngle(angle) {
-        angle = typeof angle === 'number' ? angle : this.isValidDirectionString(angle) && angle;
+        if (typeof angle !== 'number') {
+            const angleToDegrees = nomalize.angleToDegrees(angle);
+            angle = angleToDegrees !== null ? angleToDegrees : this._getAngleFromString(angle);
+        }
 
         if (typeof angle === 'number' || typeof angle === 'string') {
             this._angle = angle;
