@@ -6,10 +6,6 @@ const onColorChange = (color, pickr) => {
     console.log(color, pickr);
 };
 
-const onGradientChange = (pickr) => {
-    console.log(pickr);
-};
-
 let initialStops = [
     ['rgb(181, 32, 32)', 0.3],
     ['rgba(64, 64, 191, 0.72)', 0.7],
@@ -17,12 +13,17 @@ let initialStops = [
 ];
 
 const MyPicker = () => {
-    const [stops] = useState(initialStops);
     const [angle, setAngle] = useState(180);
+    const [css, setCss] = useState();
     const [mode, setMode] = useState();
+
+    const onGradientChange = (gpickr) => {
+        setCss(gpickr.getGradient());
+    };
 
     return (
         <div>
+            <div className="info">
             <div>
                 {/* <button onClick={changeStops}>Change Stops</button> */}
                 {`Angle: ${angle}`}
@@ -43,10 +44,12 @@ const MyPicker = () => {
                     <button onClick={() => setMode('radial')}>Radial</button>
                 </div>
             </div>
+            <div className="info-css">{css}</div>
+            </div>
             <GradientPicker
                 onColorChange={onColorChange}
                 onChange={onGradientChange}
-                stops={stops}
+                stops={initialStops}
                 angle={angle}
                 setAngle={setAngle}
                 mode={mode}
