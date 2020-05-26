@@ -1,6 +1,6 @@
 {
     "name": "react-gpickr",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "license": "MIT",
     "author": "Chris Peyer <triplechrischrischris@gmail.com>, Simon Reinisch <toports@gmx.de>",
     "description": "A React Gradient Creator / Picker",
