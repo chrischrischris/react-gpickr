@@ -24,27 +24,27 @@ const MyPicker = () => {
     return (
         <div>
             <div className="info">
-            <div>
-                {/* <button onClick={changeStops}>Change Stops</button> */}
-                {`Angle: ${angle}`}
                 <div>
-                    <button onClick={() => setAngle('to top right')}>Top Right</button>
+                    {/* <button onClick={changeStops}>Change Stops</button> */}
+                    {`Angle: ${angle}`}
+                    <div>
+                        <button onClick={() => setAngle('to top right')}>Top Right</button>
+                    </div>
+                    <div>
+                        <button onClick={() => setAngle('to top left')}>Top Left</button>
+                    </div>
                 </div>
                 <div>
-                    <button onClick={() => setAngle('to top left')}>Top Left</button>
+                    {/* <button onClick={changeStops}>Change Stops</button> */}
+                    {`Mode: ${mode}`}
+                    <div>
+                        <button onClick={() => setMode('linear')}>Linear</button>
+                    </div>
+                    <div>
+                        <button onClick={() => setMode('radial')}>Radial</button>
+                    </div>
                 </div>
-            </div>
-            <div>
-                {/* <button onClick={changeStops}>Change Stops</button> */}
-                {`Mode: ${mode}`}
-                <div>
-                    <button onClick={() => setMode('linear')}>Linear</button>
-                </div>
-                <div>
-                    <button onClick={() => setMode('radial')}>Radial</button>
-                </div>
-            </div>
-            <div className="info-css">{css}</div>
+                <div className="info-css">{css}</div>
             </div>
             <GradientPicker
                 onColorChange={onColorChange}
