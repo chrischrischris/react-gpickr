@@ -5,6 +5,25 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+console.log(isProduction ? 'Production Build' : 'Dev Build');
+
+const plugins = [
+    new CleanWebpackPlugin(),
+    new CopyPlugin([
+        { from: 'node_modules/@simonwep/pickr/dist/themes', to: 'themes' },
+    ]),
+    new FixStyleOnlyEntriesPlugin(),
+    new MiniCssExtractPlugin({
+        filename: '[name].min.css'
+    }),
+];
+
+if (!isProduction) {
+    plugins.push(new webpack.SourceMapDevToolPlugin({}));
+}
+
 module.exports = {
     resolve: {
         extensions: ['.js', '.jsx'],
@@ -61,15 +80,5 @@ module.exports = {
         ]
     },
 
-    plugins: [
-        new CleanWebpackPlugin(),
-        new CopyPlugin([
-            { from: 'node_modules/@simonwep/pickr/dist/themes', to: 'themes' },
-        ]),
-        new FixStyleOnlyEntriesPlugin(),
-        new MiniCssExtractPlugin({
-            filename: '[name].min.css'
-        }),
-        new webpack.SourceMapDevToolPlugin({}),
-    ],
+    plugins,
 };
