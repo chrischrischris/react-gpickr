@@ -30,6 +30,13 @@ function parseColor(str) {
 }
 
 function parseGradient(str) {
+    if (!str) {
+        return null;
+    }
+
+    // Clean gradient
+    str = str.replace(';', '').replace('background-image:', '');
+
     // Validate gradient
     str = normalizeGradient(str);
     if (!str) {
